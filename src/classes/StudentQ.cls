@@ -5,8 +5,7 @@ public class StudentQ {
         //Registrar
         
         //Personal Information
-        Date myDate = System.today();
-        student.Date_Of_Birth__c = myDate;
+        student.Date_Of_Birth__c = date.parse('5/10/2002');
         student.Name = 'Abhay Kevat';
         student.Roll_Number__c = 19026;
         student.Father_s_Name__c = 'Mohan Kevat';
