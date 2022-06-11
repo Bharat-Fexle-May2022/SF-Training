@@ -18,7 +18,7 @@ public class StudentQ {
         student.City__c = 'Mathura';
         student.Pin_Code__c = 281003;
         student.State__c = 'Uttar Pradesh';
-        student.RecordTypeId = '0125i000000LVYbAAO';
+        string Id = [SELECT id FROM RecordType WHERE Name ='Teacher'].Id;
             
         //Class Info    
         student.Section__c = 'B';
