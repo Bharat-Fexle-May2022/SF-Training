@@ -14,6 +14,10 @@
                 <behavior>Edit</behavior>
                 <field>Dream_World_Title__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Dream_World_Id__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

@@ -2,7 +2,6 @@
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <classAccesses>
         <apexClass>StudentManager</apexClass>
-        <apexClass>DreamWorld</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <custom>false</custom>
@@ -152,9 +151,6 @@
         <layout>Student__c-Teacher</layout>
         <recordType>Student__c.Teacher</recordType>
     </layoutAssignments>
-        <field>Dream_World__c.Dream_World_Title__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
     <objectPermissions>
         <allowCreate>false</allowCreate>
         <allowDelete>false</allowDelete>
@@ -177,12 +173,6 @@
     <tabVisibilities>
         <tab>Student__c</tab>
         <visibility>DefaultOn</visibility>
-        <object>Dream_World__c</object>
-        <viewAllRecords>true</viewAllRecords>
-    </objectPermissions>
-    <tabVisibilities>
-        <tab>Dream_World__c</tab>
-        <visibility>Hidden</visibility>
     </tabVisibilities>
     <userLicense>Analytics Cloud Integration User</userLicense>
     <userPermissions>

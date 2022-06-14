@@ -2,7 +2,6 @@
 <Profile xmlns="http://soap.sforce.com/2006/04/metadata">
     <classAccesses>
         <apexClass>StudentManager</apexClass>
-        <apexClass>DreamWorld</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <custom>false</custom>
@@ -164,12 +163,6 @@
     </recordTypeVisibilities>
     <tabVisibilities>
         <tab>Student__c</tab>
-        <editable>false</editable>
-        <field>Dream_World__c.Dream_World_Title__c</field>
-        <readable>false</readable>
-    </fieldPermissions>
-    <tabVisibilities>
-        <tab>Dream_World__c</tab>
         <visibility>Hidden</visibility>
     </tabVisibilities>
     <userLicense>Chatter External</userLicense>
