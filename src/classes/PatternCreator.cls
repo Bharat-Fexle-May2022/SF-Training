@@ -1,7 +1,4 @@
 public with sharing class PatternCreator {
-    public PatternCreator() {
-        
-    }
     public static void LeftTriangleStarPattern() {
         for(Integer i = 1; i <= 5; i++) {
             String s = ' ';
@@ -68,14 +65,15 @@ public with sharing class PatternCreator {
             }
             System.debug(s);
         }
-        for(Integer l = 1; l <= 5; l++) {
+        for(Integer l = 1; l <= 4; l++) {
             String s = ' ';
-            for(Integer m = l; m <= 5; m++) {
-                s = s + ' ';
+            for(Integer m = 1; m <= l; m++) {
+                s = s + '_';
             }
-            for(Integer n = 1; n <= l; n++) {
-                s = s + '* ';
+            for(Integer n = 4; n >= l; n--) {
+                s = s + '*';
             }
+            System.debug(s);
         }
     }
 }
