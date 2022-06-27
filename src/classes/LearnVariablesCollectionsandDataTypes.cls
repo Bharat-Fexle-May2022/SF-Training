@@ -330,7 +330,7 @@ public with sharing class LearnVariablesCollectionsandDataTypes {
 
         //indexOfChar(character) - Returns the index of the first occurrence of the character that corresponds to the specified character value
         String str2 = '\\u03A9 is Ω (Omega)';
-        // Returns 0, which is the first character.
+        // Returns 0, which is the first character
         System.debug('indexOfChar(937)=' + str2.indexOfChar(937));
 
         // Output:
@@ -340,9 +340,97 @@ public with sharing class LearnVariablesCollectionsandDataTypes {
     public static void PracticeList() {
         // Create an empty list of String
         List<String> my_list = new List<String>();
-        // Create a nested list
-        List<List<Set<Integer>>> my_list_2 = new List<List<Set<Integer>>>();
-
+        my_list.add('India');
+        System.debug(my_list);
         
+        //add(listElement) - Adds an element to the end of the list
+        List<Integer> myList1 = new List<Integer>();
+        myList1.add(47);
+        Integer myNumber1 = myList1.get(0);
+        system.assertEquals(47, myNumber1);
+        System.debug(myList1);
+
+        //add(index, listElement) - Inserts an element into the list at the specified index position
+        List<Integer> myList2 = new Integer[6];
+        myList2.add(0, 47);
+        myList2.add(4, 52);
+        System.debug(myList2);
+
+        //addAll(fromList) - Adds all of the elements in the specified list to the list that calls the method. Both lists must be of the same type
+        List<Integer> myList3 = new List<Integer>();
+        myList3.add(57);
+        myList3.add(7);
+        myList3.add(23);
+        myList3.add(62);
+        List<Integer> myList4 = new List<Integer>();
+        myList4.addAll(myList3);
+        System.debug('myList3 - ' + myList3);
+        System.debug('myList4 - ' + myList4);
+
+        //clear() - Removes all elements from a list, consequently setting the list's length to zero
+        System.debug('myList3 - ' + myList3);
+        myList3.clear();
+        System.debug('myList3 - ' + myList3);
+        
+    }
+
+    public static void LearnAboutSets() {
+
+    }
+
+    public static void LearnAboutMaps() {
+
+    }
+
+    public static void LearnAboutVariables() {
+
+        //Declaration
+        Integer i1 = 0;
+        System.debug(i1);
+        String str;
+        System.debug(str);
+        List<String> strList;
+        System.debug(strList);
+        Set<String> s;
+        System.debug(s);
+        Map<ID, String> m;
+        System.debug(m);
+        Integer i2, j, k;
+        System.debug(i2);
+        System.debug(j);
+        System.debug(k);
+
+        //Null variables and Initial values
+        Boolean x = null;
+        Decimal d;
+        System.debug(x);
+        System.debug(d);
+
+        Date d1;
+        d1.addDays(2);
+        System.debug(d1);
+
+        //Variable Scope
+        Integer i;
+        {
+            // Integer i; This declaration is not allowed
+        }
+
+        for(Integer j1 = 0; j1 <= 10; j1++);
+        for(Integer k1 = 0; k1 <= 10; k1++);
+
+        //Case Sensitivity
+        Integer A;
+        //Integer a;  //This would be an error.
+
+        Account a1;
+        ACCOUNT a2;
+
+        Account[] accts = [sELect ID From ACCouNT where nAme = 'fred'];
+
+        String y;
+        System.assert('a' == 'A');
+        System.assert(y < 'b');
+        System.assert(!(y > 'b'));
     }
 }
