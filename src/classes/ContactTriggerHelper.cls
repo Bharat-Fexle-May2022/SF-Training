@@ -7,7 +7,7 @@ public with sharing class ContactTriggerHelper {
         }
         Pan_Card__c listPanCard = [SELECT ID FROM Pan_Card__c WHERE ID = : setPanCard[0] LIMIT 1];
         if (listPanCard != Null) {
-            listContact[0].addError('This SO has been locked because it has already been submitted');
+            listContact[0].addError('Pan Card already used.');
         }
     }
 }
