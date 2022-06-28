@@ -330,7 +330,7 @@ public with sharing class LearnVariablesCollectionsandDataTypes {
 
         //indexOfChar(character) - Returns the index of the first occurrence of the character that corresponds to the specified character value
         String str2 = '\\u03A9 is Ω (Omega)';
-        // Returns 0, which is the first character.
+        // Returns 0, which is the first character
         System.debug('indexOfChar(937)=' + str2.indexOfChar(937));
 
         // Output:
@@ -340,9 +340,206 @@ public with sharing class LearnVariablesCollectionsandDataTypes {
     public static void PracticeList() {
         // Create an empty list of String
         List<String> my_list = new List<String>();
-        // Create a nested list
-        List<List<Set<Integer>>> my_list_2 = new List<List<Set<Integer>>>();
-
+        my_list.add('India');
+        System.debug(my_list);
         
+        //add(listElement) - Adds an element to the end of the list
+        List<Integer> myList1 = new List<Integer>();
+        myList1.add(47);
+        Integer myNumber1 = myList1.get(0);
+        system.assertEquals(47, myNumber1);
+        System.debug(myList1);
+
+        //add(index, listElement) - Inserts an element into the list at the specified index position
+        List<Integer> myList2 = new Integer[6];
+        myList2.add(0, 47);
+        myList2.add(4, 52);
+        System.debug(myList2);
+
+        //addAll(fromList) - Adds all of the elements in the specified list to the list that calls the method. Both lists must be of the same type
+        List<Integer> myList3 = new List<Integer>();
+        myList3.add(57);
+        myList3.add(7);
+        myList3.add(23);
+        myList3.add(62);
+        List<Integer> myList4 = new List<Integer>();
+        myList4.addAll(myList3);
+        System.debug('myList3 - ' + myList3);
+        System.debug('myList4 - ' + myList4);
+
+        //clear() - Removes all elements from a list, consequently setting the list's length to zero
+        System.debug('myList3 - ' + myList3);
+        myList3.clear();
+        System.debug('myList3 - ' + myList3);
+        
+        //Size() - Returns the number of elements in the list
+        List<Integer> myList = new List<Integer>();
+        Integer size = myList.size();
+        system.assertEquals(0, size);
+        System.debug(size);
+
+        List<Integer> myList39 = new Integer[6];
+        Integer size2 = myList39.size();
+        system.assertEquals(6, size2);
+        System.debug(size2);
+
+        //sort() - Sorts the items in the list in ascending order
+        List<Integer> q1 = new Integer[3];
+        q1[0] = 10;
+        q1[1] = 5;
+        q1[2] = 67;
+        q1.sort();
+
+        System.debug(q1);
+
+        //remove(index) - Removes the list element stored at the specified index, returning the element that was removed
+        List<String> colors = new String[3];
+        colors[0] = 'Red';
+        colors[1] = 'Blue';
+        colors[2] = 'Green';
+        colors.remove(2);
+        System.debug(colors);
+    }
+
+    public static void LearnAboutSets() {
+        // Defines a new set with two elements
+        Set<String> set1 = new Set<String>{'New York', 'Paris'};
+        System.debug(set1);
+
+        // Define a new set
+        Set<Integer> mySet = new Set<Integer>();
+        // Add two elements to the set
+        mySet.add(1);
+        mySet.add(3);
+        // Assert that the set contains the integer value we added
+        System.assert(mySet.contains(1)); 
+        // Remove the integer value from the set
+        mySet.remove(1);
+        System.debug(mySet);
+
+        // Define a new set that contains the
+        // elements of the set created in the previous example
+        Set<Integer> mySet2 = new Set<Integer>(mySet);
+        // Assert that the set size equals 1
+        // Note: The set from the previous example contains only one value
+        System.assert(mySet2.size() == 1);
+        System.debug(mySet2);
+
+        //add(setElement) - Adds an element to the set if it is not already present
+        Set<String> myString1 = new Set<String>{'a', 'b', 'c'};
+        Boolean result = myString1.add('d');
+        System.assertEquals(true, result);
+        System.debug(myString1);
+        System.debug(result);
+        
+        //clear() - Removes all of the elements from the set
+        Set<String> myString2 = new Set<String>{'a', 'b', 'c'};
+        myString2.clear();
+        System.debug(myString2);
+
+        //clone() - Makes a duplicate copy of the set
+        Set<String> myString3 = new Set<String>{'a', 'b', 'c'};
+        Set<String> cloneofmyString3 = new Set<String>();
+        cloneofmyString3 = myString3.clone();
+        System.debug(cloneofmyString3);
+
+        //contains(setElement) - Returns true if the set contains the specified element
+        Set<String> myString4 = new Set<String>{'a', 'b'};
+        System.debug(myString4.contains('z'));
+
+        //isEmpty() - Returns true if the set has zero elements
+        Set<Integer> mySet4 = new Set<Integer>();
+        System.debug(mySet4.isEmpty());
+    }
+
+    public static void LearnAboutMaps() {
+        //Declaration of Maps
+        Map<String, String> country_currencies = new Map<String, String>();
+        Map<ID, Set<String>> m = new Map<ID, Set<String>>();
+        System.debug(country_currencies);
+        System.debug(m);
+
+        //Assigning values of key and value for Map
+        Map<String, String> MyStrings = new Map<String, String>{'a' => 'b', 'c' => 'd'.toUpperCase()};
+        System.debug(MyStrings);
+
+        Map<Integer, String> m1 = new Map<Integer, String>();    // Define a new map
+        m1.put(1, 'Aman');                                       // Insert a new key-value pair in the map
+        m1.put(2, 'Suraj');                                      // Insert a new key-value pair in the map
+        System.assert(m1.containsKey(1));                        // Assert that the map contains a key
+        String value = m1.get(2);                                // Retrieve a value, given a particular key
+        System.assertEquals('Suraj', value);
+        // Set<String> s45 = m.values();                            // Return a set that contains all of the values in the map
+        // System.debug(s45);
+        Set<Integer> s42 = m1.keySet();                            // Return a set that contains all of the keys in the map
+        System.debug(s42);                                        // Displaying Key Set
+
+        // clone() - Makes a duplicate copy of the map
+        Account a = new Account(Name='Acme', BillingCity='New York');
+        System.debug(a);
+
+        Map<Integer, Account> map1 = new Map<Integer, Account> {};
+        map1.put(1, a);
+        System.debug(map1);
+
+        Map<Integer, Account> map2 = map1.clone();
+        map1.get(1).BillingCity = 'San Francisco';
+        System.debug(map2);
+        // map1.get(1).BillingCity = 'San Francisco';
+        System.assertEquals('San Francisco',map1.get(1).BillingCity);
+        System.assertEquals('San Francisco',map2.get(1).BillingCity);
+        
+    }
+
+    public static void LearnAboutVariables() {
+
+        //Declaration
+        Integer i1 = 0;
+        System.debug(i1);
+        String str;
+        System.debug(str);
+        List<String> strList;
+        System.debug(strList);
+        Set<String> s;
+        System.debug(s);
+        Map<ID, String> m;
+        System.debug(m);
+        Integer i2, j, k;
+        System.debug(i2);
+        System.debug(j);
+        System.debug(k);
+
+        //Null variables and Initial values
+        Boolean x = null;
+        Decimal d;
+        System.debug(x);
+        System.debug(d);
+
+        Date d1;
+        d1.addDays(2);
+        System.debug(d1);
+
+        //Variable Scope
+        Integer i;
+        {
+            // Integer i; This declaration is not allowed
+        }
+
+        for(Integer j1 = 0; j1 <= 10; j1++);
+        for(Integer k1 = 0; k1 <= 10; k1++);
+
+        //Case Sensitivity
+        Integer A;
+        //Integer a;  //This would be an error.
+
+        Account a1;
+        ACCOUNT a2;
+
+        Account[] accts = [sELect ID From ACCouNT where nAme = 'fred'];
+
+        String y;
+        System.assert('a' == 'A');
+        System.assert(y < 'b');
+        System.assert(!(y > 'b'));
     }
 }
