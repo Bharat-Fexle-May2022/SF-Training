@@ -9,7 +9,7 @@ public class Day13_ConceptOfClass {
 
     }
 
-    // Declaration of Class
+    // Declaration of Inner Class
     public class InnerClass {
 
         public void multiplyTwoNumbers() {
@@ -22,6 +22,7 @@ public class Day13_ConceptOfClass {
 
     }
 
+    //Declaration of Class Variables
     protected final String str = 'Hello';
     private Integer i = 56;
     protected Boolean b = true;
