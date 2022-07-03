@@ -15,9 +15,9 @@ public with sharing class Day13_StaticAndInstanceMethods {
 
             System.debug('This is instance method.');
 
-            System.debug(red);
-            System.debug(green);
-            System.debug(blue);
+            // System.debug(red);
+            // System.debug(green);
+            // System.debug(blue);
         }
      }
 
