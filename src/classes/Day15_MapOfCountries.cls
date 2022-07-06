@@ -1,4 +1,6 @@
 public with sharing class Day15_MapOfCountries {
+
+    Map<String, Map<String, Map<String, List<String>>>> mapOfCountries =  new Map<String, Map<String, Map<String, List<String>>>>();
     
     public Day15_MapOfCountries() {
 
@@ -27,15 +29,14 @@ public with sharing class Day15_MapOfCountries {
         //Map of Sri Lanka
         Map<String, List<String>> mapOfStateWithCityOfSriLanka = new Map<String, List<String>>();
         mapOfStateWithCityOfSriLanka.put('Anuradha Pura', new List<String> {'Anuradhapura East Electoral District', 'Mihintale Electoral District', 'Kekirawa Electoral District', 'Horowpothana Electoral District'});
-        mapOfStateWithCityOfSriLanka.put('Badulla', new List<String> {'Bogoda Wooden Bridge', 'Army Garrison Town', 'Namunukula Mountain Range', 'Indigenous Vedda people, Dambana'});
-        mapOfStateWithCityOfSriLanka.put('Colombo', new List<String> {'Mattakkuliya', 'Lunupokuna', 'Mahawatte', 'Modera'});
+        mapOfStateWithCityOfSriLanka.put('Badulla', new List<String> {'Bogoda Wooden Bridge', 'Army Garrison Town', 'Namunukula Mountain Range', 'Indigenous Vedda people'});
+        mapOfStateWithCityOfSriLanka.put('Southern Colombo', new List<String> {'Mattakkuliya', 'Lunupokuna', 'Mahawatte', 'Modera'});
         mapOfStateWithCityOfSriLanka.put('Kandy', new List<String> {'Poojapitiya', 'Thumpane', 'Udapalatha', 'Ududumbara'});
 
         Map<String, Map<String, List<String>>> mapOfCountryWithStateOfSriLanka = new Map<String, Map<String, List<String>>>();
         mapOfCountryWithStateOfSriLanka.put('Sri Lanka', mapOfStateWithCityOfSriLanka);
 
 
-        Map<String, Map<String, Map<String, List<String>>>> mapOfCountries =  new Map<String, Map<String, Map<String, List<String>>>>();
         mapOfCountries.put('IND', mapOfCountryWithStateOfIndia);
         mapOfCountries.put('USA', mapOfCountryWithStateOfUS);
         mapOfCountries.put('LKA', mapOfCountryWithStateOfSriLanka);
@@ -48,18 +49,48 @@ public with sharing class Day15_MapOfCountries {
 
         // Map<String, Map<String, String>> mapOfResult = new Map<String, Map<String, String>>();
 
-        // for (String countryCode : mapOfCountries.keySet()) {
-        //     Map<String, Map<String, List<String>>> mapToStoreValueFromcountryCode = mapOfCountries.get(country);
-        //     for (String countryName : mapToStoreValueFromcountryCode.keySet()) {
-        //         if (country name starts with s) {
-        //             if (!mapOfResult.contains(country name)) {
-        //                 mapOfResult.put(country name, Map<String, String>());
-        //             }
-        //             Map<String, List<String>> 
-                    
-        //         }
-                
-        //     }
-        // }
+    }
+
+
+    public void findDistrictUnderSpecificLength() {
+        for(String countryCode : mapOfCountries.keySet()) {
+            for(String countryName : mapOfCountries.get(countryCode).keySet()) {
+                for(String stateName : mapOfCountries.get(countryCode).get(countryName).keySet()) {
+                    for(String cityName : mapOfCountries.get(countryCode).get(countryName).get(stateName)) {
+                        if(cityName.length()>=10) {
+                            System.debug('Districts length greaterthan 10 -> '+ cityName);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    List<String> listOfCountries = new List<String>();
+    List<String> listOfStates = new List<String>();
+    List<String> listOfDistricts = new List<String>();
+
+    public void findCountryStateAndDistrictStartsWithS() {
+        for(String countryCode : mapOfCountries.keySet()) {
+            for(String countryName : mapOfCountries.get(countryCode).keySet()) {
+                if(countryName.charAt(0) == 83) {
+                    listOfCountries.add(countryName);
+                    for(String stateName : mapOfCountries.get(countryCode).get(countryName).keySet()) {
+                        if(stateName.charAt(0) == 83) {
+                            listOfStates.add(stateName);
+                        }
+                        for(String cityName : mapOfCountries.get(countryCode).get(countryName).get(stateName)) {
+                            if(cityName.charAt(0) == 83) {
+                                listOfDistricts.add(cityName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        System.debug('List of Countries contains s -> ' + listOfCountries);
+        System.debug('List of States contains s -> ' + listOfStates);
+        System.debug('List of Districts contains s -> ' + listOfDistricts);
     }
 }
