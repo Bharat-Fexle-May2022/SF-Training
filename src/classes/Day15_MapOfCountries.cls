@@ -1,3 +1,10 @@
+/*
+ * Created Date         :       4/7/2022
+ * Author               :       Bharat Kumar
+ * Description          :       Map of Country
+*/
+
+
 public with sharing class Day15_MapOfCountries {
 
     Map<String, Map<String, Map<String, List<String>>>> mapOfCountries =  new Map<String, Map<String, Map<String, List<String>>>>();
@@ -41,14 +48,6 @@ public with sharing class Day15_MapOfCountries {
         mapOfCountries.put('USA', mapOfCountryWithStateOfUS);
         mapOfCountries.put('LKA', mapOfCountryWithStateOfSriLanka);
 
-
-        // System.debug('mapOfCountries: ' + mapOfCountries);
-        // System.debug('mapOfCountryWithStateOfIndia: ' + mapOfCountryWithStateOfIndia.get('India'));
-        // System.debug('mapOfCountryWithStateOfUS: ' + mapOfCountryWithStateOfUS.get('United States of America'));
-        // System.debug('mapOfCountryWithStateOfSriLanka: ' + mapOfCountryWithStateOfSriLanka.get('Sri Lanka'));
-
-        // Map<String, Map<String, String>> mapOfResult = new Map<String, Map<String, String>>();
-
     }
 
 
@@ -66,31 +65,32 @@ public with sharing class Day15_MapOfCountries {
         }
     }
 
-    List<String> listOfCountries = new List<String>();
-    List<String> listOfStates = new List<String>();
-    List<String> listOfDistricts = new List<String>();
+    Map<String, Map<String, List<String>>> mapCountryStateDistrict = new Map<String, Map<String, List<String>>>();
+    list<String> listOfDistricts;
+    Map<String, List<String>> mapOfState;
 
     public void findCountryStateAndDistrictStartsWithS() {
+        
         for(String countryCode : mapOfCountries.keySet()) {
             for(String countryName : mapOfCountries.get(countryCode).keySet()) {
                 if(countryName.charAt(0) == 83) {
-                    listOfCountries.add(countryName);
+                    mapOfState = new Map<String, List<String>>();
                     for(String stateName : mapOfCountries.get(countryCode).get(countryName).keySet()) {
                         if(stateName.charAt(0) == 83) {
-                            listOfStates.add(stateName);
-                        }
-                        for(String cityName : mapOfCountries.get(countryCode).get(countryName).get(stateName)) {
-                            if(cityName.charAt(0) == 83) {
-                                listOfDistricts.add(cityName);
+                            listOfDistricts = new List<String>();
+                            for(String cityName : mapOfCountries.get(countryCode).get(countryName).get(stateName)) {
+                                if(cityName.charAt(0) == 83) {
+                                    listOfDistricts.add(cityName);
+                                }
                             }
+                            mapOfState.put(stateName, listOfDistricts);
                         }
                     }
+                    mapCountryStateDistrict.put(countryName, mapOfState);
                 }
             }
         }
 
-        System.debug('List of Countries contains s -> ' + listOfCountries);
-        System.debug('List of States contains s -> ' + listOfStates);
-        System.debug('List of Districts contains s -> ' + listOfDistricts);
+        System.debug(mapCountryStateDistrict);
     }
 }
