@@ -66,7 +66,7 @@ public with sharing class Day15_MapOfCountries {
     }
 
     Map<String, Map<String, List<String>>> mapCountryStateDistrict = new Map<String, Map<String, List<String>>>();
-    list<String> listOfDistricts;
+    List<String> listOfDistricts;
     Map<String, List<String>> mapOfState;
 
     public void findCountryStateAndDistrictStartsWithS() {
