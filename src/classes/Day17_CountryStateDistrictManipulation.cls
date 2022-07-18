@@ -1,20 +1,20 @@
 /*
-* ─────────────────────────────────────────────────────────────────────────────────────────────────┐
+* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 * This Class is used to access data from Country, State and District Object.
 * It updates the JSON data field on Country Object.
-*
-* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* There is a method which is used to find combination of Countries, States and Districts with a starting keyword.
+* ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 * @author         Bharat Kumar   <bharat.kumar@fexle.com>
 * @modifiedBy     Bharat Kumar   <bharat.kumar@fexle.com>
 * @maintainedBy   Bharat Kumar   <bharat.kumar@fexle.com>
 * @version        1.0
 * @created        2022-07-13
-* ──────────────────────────────────────────────────────────────────────────────────────────────────
+* ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 * @changes
 * vX.X            bharat.kumar@fexle.com
 * YYYY-MM-DD      Explanation of the change.  Multiple lines can be used to explain the change, but
 *                 each line should be indented till left aligned with the previous description text.
-* ─────────────────────────────────────────────────────────────────────────────────────────────────┘
+* ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 */
 
 public class Day17_CountryStateDistrictManipulation {
@@ -109,7 +109,10 @@ public class Day17_CountryStateDistrictManipulation {
     // public List<Country> countryList(get;set;)
 
     public class Country{
-        public string countryName{get;set;}
+        public String countryName{get;set;}
+        public String countryCode{get;set;}
+        public Integer totalStates{get;set;}
+        public Integer totalDistricts{get;set;}
         public List<States> states{get;set;}
     }
 
@@ -123,14 +126,19 @@ public class Day17_CountryStateDistrictManipulation {
     }
 
     /**
-    * ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
     * Created Date         :       15/7/2022
     * Author               :       Bharat Kumar
     * Description          :       Generate JSON of a particular Country.
-    * ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    * @param    countryName2        String
+    * @param    countryCode         String
+    * @param    totalStates         Decimal
+    * @param    totalDistricts      Decimal
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
     */
 
-    public String returnJSON(String countryName2) {
+    public String returnJSON(String countryName2, String countryCode, Integer totalStates, Integer totalDistricts) {
         Country con = new Country();
         List<States> listStates = new List<States>();
         con.countryName = countryName2;
@@ -147,21 +155,24 @@ public class Day17_CountryStateDistrictManipulation {
             listStates.add(st);
         }
         con.states = listStates;
+        con.countryCode = countryCode;
+        con.totalStates = totalStates;
+        con.totalDistricts = totalDistricts;
         return JSON.serialize(con);
     }
 
-    /**
-    * ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+    /*
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
     * Created Date         :       15/7/2022
     * Author               :       Bharat Kumar
     * Description          :       Updates the JSON data field on Country Object.
-    * ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
     */
 
     public void updateJSONData() {
-        List<Country__c> listCountry = [Select Id, Name, Country_JSON_Data__c From Country__c];
+        List<Country__c> listCountry = [Select Id, Name, Country_Code__c, Total_Number_Of_States__c, Total_Number_Of_Districts__c,Country_JSON_Data__c From Country__c];
         for (Country__c c : listCountry) {
-        c.Country_JSON_Data__c = returnJSON(c.Name);
+        c.Country_JSON_Data__c = returnJSON(c.Name, c.Country_Code__c, (Integer)c.Total_Number_Of_States__c, (Integer)c.Total_Number_Of_Districts__c);
         }
         update listCountry;
         System.debug('JSON Data Updated Successfully.');
@@ -173,13 +184,13 @@ public class Day17_CountryStateDistrictManipulation {
     public Map<String, List<String>> mapStateWithStartingKey;
 
     /**
-    * ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
     * Created Date         :       15/7/2022
     * Author               :       Bharat Kumar
     * Description          :       Finds the combination of Country, State and District starts with specific character and put them into Map.
-    * ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     * @param    searchKey    String
-    * ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
     */
 
     public void findCombinationWithStartingKey(String searchKey) {
