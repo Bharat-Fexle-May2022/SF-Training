@@ -155,16 +155,13 @@ public class Day17_CountryStateDistrictManipulation {
             listStates.add(st);
         }
         con.states = listStates;
-        // con.countryCode = [Select Country_Code__c From Country__c Where Name =: countryName2 Limit 1];
-        // con.totalStates = [Select Total_Number_Of_States__c From Country__c Where Name =: countryName2 Limit 1];
-        // con.totalDistricts = [Select Total_Number_Of_Districts__c From Country__c Where Name =: countryName2 Limit 1];
         con.countryCode = countryCode;
         con.totalStates = totalStates;
         con.totalDistricts = totalDistricts;
         return JSON.serialize(con);
     }
 
-    /**
+    /*
     ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
     * Created Date         :       15/7/2022
     * Author               :       Bharat Kumar
