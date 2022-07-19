@@ -138,8 +138,8 @@ public with sharing class CountryStateJSONGenerator {
     public class Country{
         public String countryName{get;set;}
         public String countryCode{get;set;}
-        public Integer totalStates{get;set;}
-        public Integer totalDistricts{get;set;}
+        public Integer countryTotalStates{get;set;}
+        public Integer countryTotalDistricts{get;set;}
         public List<States> states{get;set;}
     }
 
@@ -182,7 +182,7 @@ public with sharing class CountryStateJSONGenerator {
     ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
     */
 
-    public String countryJSONGenerator(String countryName2, String countryCode, Integer totalStates, Integer totalDistricts){
+    public String countryJSONGenerator(String countryName2, String countryCode, Integer TotalStates, Integer totalDistricts){
         Country con = new Country();
         List<States> listStates = new List<States>();
         con.countryName = countryName2;
@@ -200,8 +200,8 @@ public with sharing class CountryStateJSONGenerator {
         }
         con.states = listStates;
         con.countryCode = countryCode;
-        con.totalStates = totalStates;
-        con.totalDistricts = totalDistricts;
+        con.countryTotalStates = totalStates;
+        con.countryTotalDistricts = totalDistricts;
         return JSON.serialize(con);
     }
 
