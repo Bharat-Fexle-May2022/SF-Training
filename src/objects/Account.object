@@ -224,7 +224,15 @@
         <formFactor>Small</formFactor>
         <type>Default</type>
     </actionOverrides>
-    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <compactLayoutAssignment>Mobile_Account_Layout</compactLayoutAssignment>
+    <compactLayouts>
+        <fullName>Mobile_Account_Layout</fullName>
+        <fields>Name</fields>
+        <fields>AnnualRevenue</fields>
+        <fields>Phone</fields>
+        <fields>Type</fields>
+        <label>Mobile Account Layout</label>
+    </compactLayouts>
     <enableFeeds>true</enableFeeds>
     <enableHistory>false</enableHistory>
     <externalSharingModel>Private</externalSharingModel>
@@ -314,6 +322,15 @@
         <trackFeedHistory>false</trackFeedHistory>
     </fields>
     <fields>
+        <fullName>Email__c</fullName>
+        <externalId>false</externalId>
+        <label>Email</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Email</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>Fax</fullName>
         <trackFeedHistory>false</trackFeedHistory>
     </fields>
@@ -325,6 +342,24 @@
     <fields>
         <fullName>Jigsaw</fullName>
         <trackFeedHistory>false</trackFeedHistory>
+    </fields>
+    <fields>
+        <fullName>Match_Billing_Address__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Match Billing Address</label>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>MyExtID__c</fullName>
+        <externalId>false</externalId>
+        <label>MyExtID</label>
+        <length>20</length>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <fields>
         <fullName>NaicsCode</fullName>
@@ -507,6 +542,26 @@
         <label>All Accounts</label>
     </listViews>
     <listViews>
+        <fullName>Channel_Customers</fullName>
+        <columns>ACCOUNT.NAME</columns>
+        <columns>ACCOUNT.ADDRESS1_STATE</columns>
+        <columns>ACCOUNT.TYPE</columns>
+        <columns>ACCOUNT.INDUSTRY</columns>
+        <columns>CustomerPriority__c</columns>
+        <filterScope>Mine</filterScope>
+        <filters>
+            <field>ACCOUNT.TYPE</field>
+            <operation>equals</operation>
+            <value>Customer - Channel</value>
+        </filters>
+        <filters>
+            <field>ACCOUNT.ADDRESS1_STATE</field>
+            <operation>equals</operation>
+            <value>WA,OR,CA</value>
+        </filters>
+        <label>Channel Customers</label>
+    </listViews>
+    <listViews>
         <fullName>MyAccounts</fullName>
         <filterScope>Mine</filterScope>
         <label>My Accounts</label>
@@ -578,5 +633,24 @@
         <showsLocation>true</showsLocation>
         <showsStatus>true</showsStatus>
         <url>http://www.genwatt.com/genwatt/billing.htm?actname={!Account_Name}</url>
+    </webLinks>
+    <webLinks>
+        <fullName>Map_Location</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <encodingKey>UTF-8</encodingKey>
+        <hasMenubar>false</hasMenubar>
+        <hasScrollbars>true</hasScrollbars>
+        <hasToolbar>false</hasToolbar>
+        <height>600</height>
+        <isResizable>true</isResizable>
+        <linkType>url</linkType>
+        <masterLabel>Map Location</masterLabel>
+        <openType>newWindow</openType>
+        <position>none</position>
+        <protected>false</protected>
+        <showsLocation>false</showsLocation>
+        <showsStatus>false</showsStatus>
+        <url>http://maps.google.com/maps?q={!Account.BillingStreet}%20{!Account.BillingCity}%20{!Account.BillingState}%20{!Account.BillingPostalCode}</url>
     </webLinks>
 </CustomObject>
