@@ -1,13 +1,21 @@
-trigger TriggerAccount on Account (before insert, before update, after insert) {
+trigger TriggerAccount on Account (before insert, after insert, after delete) {
 
-    if (Trigger.isInsert && Trigger.isAfter) {
-        TriggerAccountHelper.sendEmailNotification(Trigger.new);
+    if (Trigger.isAfter) {
+        if (Trigger.isInsert) {
+            TriggerAccountHelper.createAccountEmail(Trigger.new);
+        }
+
+        if (Trigger.isDelete) {
+            TriggerAccountHelper.deleteAccountMail(Trigger.old);
+        }
     }
 
     if (Trigger.isBefore) {
-        if (Trigger.isInsert || Trigger.isUpdate) {
+        if (Trigger.isInsert) {
             TriggerAccountHelper.prefixAccountNumber(Trigger.new);
-            TriggerAccountHelper.testTriggerEvents(Trigger.new, Trigger.old);
-        }    
+        }
     }
+
+    TriggerAccountHelper.testTriggerEvents(Trigger.new, Trigger.old);
+
 }
