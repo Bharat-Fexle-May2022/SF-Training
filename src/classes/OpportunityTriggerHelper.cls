@@ -224,11 +224,22 @@ public with sharing class OpportunityTriggerHelper {
         }
     }
 
+    /*
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Created Date         :       05/08/2022
+    * Author               :       Bharat Kumar
+    * Description          :       Send Mail when Opportunity is updated or created
+    * Returns              :       Void
+    * Parameters           :       List<SObject>, List<SObject>, Set<Opportunity>, Boolean
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+    */
+
     public static void sendMail(List<SObject> listOfNewRecords, List<SObject> listOfUpdatedRecords, Set<Opportunity> setOfOpportuinties, Boolean flag) {
 
         Map<String, SObject> mapOfRecordsWithOpportunity = new Map<String, Opportunity>();
         Map<String, List<SObject>> mapOfAutomobileRecords = new Map<String, List<SObject>>();
         List<SObject> listOfAutomobileRecords = new List<SObject>();
+
         if (!listOfNewRecords.isEmpty() && !listOfUpdatedRecords.isEmpty()) {
             listOfAutomobileRecords.addAll(listOfNewRecords);
             listOfAutomobileRecords.addAll(listOfUpdatedRecords);
@@ -239,6 +250,7 @@ public with sharing class OpportunityTriggerHelper {
         else {
             listOfAutomobileRecords.addAll(listOfUpdatedRecords);
         }
+
         Database.UpsertResult[] results;
         String htmlBody1 = '';
         String htmlBody2 = '';
@@ -258,6 +270,7 @@ public with sharing class OpportunityTriggerHelper {
                 mapOfAutomobileRecords.put(opp.Name, tempSObj);
             }
         }
+        
         for (Opportunity opp : setOfOpportuinties) {
             Messaging.SingleEmailMessage emailMsg = new Messaging.SingleEmailMessage();
             emailMsg.setToAddresses(new String[]{opp.Email__c});
@@ -385,10 +398,14 @@ public with sharing class OpportunityTriggerHelper {
                         }
                     }
                 }
+
+                // Add message to HTML Body
                 htmlBody1 += '<tr><td>' + sensorType + '</td><td>' + sensorName + '</td><td>' + message1 + '</td></tr>';                        
                 htmlBody2 += '<tr><td>' + sensorType + '</td><td>' + sensorName + '</td><td>' + message2 + '</td></tr>';   
                 message2Reference = message2;                     
             }
+
+            // Close HTML Body
             htmlBody1 += '</table><br>';
             htmlBody2 += '</table><br>';
             if (message2Reference != null) {
