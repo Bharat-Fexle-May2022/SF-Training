@@ -8,6 +8,11 @@
 
 public with sharing class OpportunityTriggerHelper {
 
+    // Constants for Store message for Mail
+    Static Final String insertionEmailMessage = ' Inserted Under Installation Account : ';
+    Static Final String updateShipmentToInstallationEmailMessage = ' is moved from Shipment to under Installation Account.';
+    Static Final String updateInstallationToShipmentEmailMessage = ' is moved from Installation to under Shipment Account.';
+
     /*
     ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
     * Created Date         :       30/7/2022
@@ -55,8 +60,8 @@ public with sharing class OpportunityTriggerHelper {
             List<String> listToCheckDuplicates;
             if (opp.StageName == 'Return to HQ') {
                 listToCheckDuplicates = new List<String>();
-                if (opp.Shipment_Account__c != null) {
-                    if (opp.Return_To_HQ__c != null) {
+                if (String.isNotBlank(opp.Shipment_Account__c)) {
+                    if (String.isNotBlank(opp.Return_To_HQ__c)) {
                         for (String recordName : opp.Return_To_HQ__c.split('\n')) {
                             listOfTagDetails.add(recordName.trim());                            
                         }
@@ -103,22 +108,22 @@ public with sharing class OpportunityTriggerHelper {
             }
             else if (opp.StageName == 'Return to Customer' || opp.StageName == 'Shipped To Customer') {
                 listToCheckDuplicates = new List<String>();
-                if (opp.Automobile_Tag_Details_1__c != null) {
+                if (String.isNotBlank(opp.Automobile_Tag_Details_1__c)) {
                     for (String recordName : opp.Automobile_Tag_Details_1__c.split('\n')) {
                         listOfTagDetails.add(recordName.trim());                                            
                     }
                 }
-                if (opp.Automobile_Tag_Details_2__c != null) {
+                if (String.isNotBlank(opp.Automobile_Tag_Details_2__c)) {
                     for (String recordName : opp.Automobile_Tag_Details_2__c.split('\n')) {
                         listOfTagDetails.add(recordName.trim());                                            
                     }
                 }
-                if (opp.Automobile_Tag_Details_3__c != null) {
+                if (String.isNotBlank(opp.Automobile_Tag_Details_3__c)) {
                     for (String recordName : opp.Automobile_Tag_Details_3__c.split('\n')) {
                         listOfTagDetails.add(recordName.trim());                                            
                     }
                 }
-                if (opp.AccountId != null) {
+                if (String.isNotBlank(opp.AccountId)) {
                     if (!listOfTagDetails.isEmpty()) {
                         for (String recordName : listOfTagDetails) {
                             if (!listToCheckDuplicates.contains(recordName)) {
@@ -211,16 +216,27 @@ public with sharing class OpportunityTriggerHelper {
             }
         }
 
+        Set<SObject> setOfAutomobileRecords = new Set<SObject>();
+
+        if (!createNewAutomobileRecords.isEmpty()) {
+            if (!updateExistingAutomobileRecors.isEmpty()) {
+                setOfAutomobileRecords.addAll(createNewAutomobileRecords);
+                setOfAutomobileRecords.addAll(updateExistingAutomobileRecors);
+            }
+        }
+
         Boolean flag = true;
         if (!createNewAutomobileRecords.isEmpty()) {
             // Insert New Automobile Records
             flag = true;
-            sendMail(createNewAutomobileRecords, updateExistingAutomobileRecors, listOfOpportuinties, flag);
+            setOfAutomobileRecords.addAll(createNewAutomobileRecords);
+            sendMail(setOfAutomobileRecords, listOfOpportuinties, flag);
         }
         if (!updateExistingAutomobileRecors.isEmpty()) {
             // Update Existing Automobile Records
             flag = false;
-            sendMail(createNewAutomobileRecords, updateExistingAutomobileRecors, listOfOpportuinties, flag);
+            setOfAutomobileRecords.addAll(updateExistingAutomobileRecors);
+            sendMail(setOfAutomobileRecords, listOfOpportuinties, flag);
         }
     }
 
@@ -234,35 +250,29 @@ public with sharing class OpportunityTriggerHelper {
     ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
     */
 
-    public static void sendMail(List<SObject> listOfNewRecords, List<SObject> listOfUpdatedRecords, Set<Opportunity> setOfOpportuinties, Boolean flag) {
+    public static void sendMail(Set<SObject> setOfAutomobileRecords, Set<Opportunity> setOfOpportuinties, Boolean flag) {
 
         Map<String, SObject> mapOfRecordsWithOpportunity = new Map<String, Opportunity>();
         Map<String, List<SObject>> mapOfAutomobileRecords = new Map<String, List<SObject>>();
-        List<SObject> listOfAutomobileRecords = new List<SObject>();
-
-        if (!listOfNewRecords.isEmpty() && !listOfUpdatedRecords.isEmpty()) {
-            listOfAutomobileRecords.addAll(listOfNewRecords);
-            listOfAutomobileRecords.addAll(listOfUpdatedRecords);
-        }
-        else if (!listOfNewRecords.isEmpty()) {
-            listOfAutomobileRecords.addAll(listOfNewRecords);
-        }
-        else {
-            listOfAutomobileRecords.addAll(listOfUpdatedRecords);
-        }
 
         Database.UpsertResult[] results;
         String htmlBody1 = '';
         String htmlBody2 = '';
         String message2Reference;
         List<Messaging.Email> emailList = new List<Messaging.Email>();
+        List<SObject> listOfAutomobileRecords = new List<SObject>();
+        for (SObject record : setOfAutomobileRecords) {
+            listOfAutomobileRecords.add(record);
+        }
 
+
+        System.debug('List of Automobile Records : ' + setOfAutomobileRecords.size());
         results = Database.upsert(listOfAutomobileRecords, false);            
 
-        if (listOfAutomobileRecords != null) {
+        if (!setOfAutomobileRecords.isEmpty()) {
             for (Opportunity opp : setOfOpportuinties) {
                 List<SObject> tempSObj = new List<SObject>();
-                for (SObject autoRecord : listOfAutomobileRecords) {
+                for (SObject autoRecord : setOfAutomobileRecords) {
                     if ((String)autoRecord.get('Opportunity__c') == opp.Id) {
                         tempSObj.add(autoRecord);
                     }
@@ -270,7 +280,7 @@ public with sharing class OpportunityTriggerHelper {
                 mapOfAutomobileRecords.put(opp.Name, tempSObj);
             }
         }
-        
+
         for (Opportunity opp : setOfOpportuinties) {
             Messaging.SingleEmailMessage emailMsg = new Messaging.SingleEmailMessage();
             emailMsg.setToAddresses(new String[]{opp.Email__c});
@@ -278,137 +288,144 @@ public with sharing class OpportunityTriggerHelper {
             htmlBody1 = 'Successful <br> <table border="1" style="border-collapse: collapse"><caption>Request Summary Data</caption><tr><th>Automobile Type</th><th>Sensor Name</th><th>Message</th></tr>';
             htmlBody2 = 'Unsuccessful <br> <table border="1" style="border-collapse: collapse"><caption>Request Summary Data</caption><tr><th>Automobile Type</th><th>Sensor Name</th><th>Message</th></tr>';
 
-            for (SObject recordName : mapOfAutomobileRecords.get(opp.Name)) {
-                String sensorName = (String)recordName.get('Name');
-                String sensorType;
-                String message1;
-                String message2;
-
-                for (Database.UpsertResult result : results) {
-                    if (sensorName.contains('00:11:CE:00')) {
-                        sensorType = 'Automobile Sensor';
-                        if (flag == true) {
-                            if (result.isSuccess()) {
-                                message1 = sensorType + ' Inserted Under Installation Account : ' + (String)recordName.get('Account__c');
+            if (!mapOfAutomobileRecords.isEmpty()) {
+                for (SObject recordName : mapOfAutomobileRecords.get(opp.Name)) {
+                    String sensorName = (String)recordName.get('Name');
+                    String sensorType;
+                    String message1 = '';
+                    String message2 = '';
+    
+                    for (Database.UpsertResult result : results) {
+                        if (sensorName.contains('00:11:CE:00')) {
+                            sensorType = 'Automobile Sensor';
+                            if (flag == true) {
+                                if (result.isSuccess()) {
+                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
+                                }
                             }
                             else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                if (result.isSuccess()) {
+                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
+                                    }
+                                    else {
+                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
+                                    }
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
                                 }
                             }
                         }
-                        else {
-                            if (result.isSuccess()) {
-                                if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                    message1 = sensorType + ' is moved from Shipment Account ' + opp.Shipment_Account__c + ' to Installation Account ' + opp.AccountId;                                    
+                        else if (sensorName.contains('00:11:CE:D')) {
+                            sensorType = 'Automobile Presence Sensor';
+                            if (flag == true) {
+                                if (result.isSuccess()) {
+                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
                                 }
                                 else {
-                                    message1 = sensorType + ' is moved from Installation Account ' + opp.AccountId + ' to Shipment Account ' + opp.Shipment_Account__c;                                    
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
                                 }
                             }
                             else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                if (result.isSuccess()) {
+                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
+                                    }
+                                    else {
+                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
+                                    }
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
+                                }
+                            }
+                        }
+                        else if (sensorName.contains('00:11:CE:E')) {
+                            sensorType = 'Automobile TDU Sensor';
+                            if (flag == true) {
+                                if (result.isSuccess()) {
+                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
+                                }
+                            }
+                            else {
+                                if (result.isSuccess()) {
+                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
+                                    }
+                                    else {
+                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
+                                    }
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
+                                }
+                            }
+                        }
+                        else if (sensorName.substring(1,3).isNumeric()) {
+                            sensorType = 'Automobile Tag';
+                            if (flag == true) {
+                                if (result.isSuccess()) {
+                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
+                                }
+                            }
+                            else {
+                                if (result.isSuccess()) {
+                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
+                                    }
+                                    else {
+                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
+                                    }
+                                }
+                                else {
+                                    for (Database.Error error : result.getErrors()) {
+                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
+                                    }
                                 }
                             }
                         }
                     }
-                    else if (sensorName.contains('00:11:CE:D')) {
-                        sensorType = 'Automobile Presence Sensor';
-                        if (flag == true) {
-                            if (result.isSuccess()) {
-                                message1 = sensorType + ' Inserted Under Installation Account : ' + (String)recordName.get('Account__c');
-                            }
-                            else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                }
-                            }
-                        }
-                        else {
-                            if (result.isSuccess()) {
-                                if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                    message1 = sensorType + ' is moved from Shipment Account ' + opp.Shipment_Account__c + ' to Installation Account ' + opp.AccountId;                                    
-                                }
-                                else {
-                                    message1 = sensorType + ' is moved from Installation Account ' + opp.AccountId + ' to Shipment Account ' + opp.Shipment_Account__c;                                   
-                                }
-                            }
-                            else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                }
-                            }
-                        }
+    
+                    // Add message to HTML Body
+                    if (String.isNotEmpty(message1)) {
+                        htmlBody1 += '<tr><td>' + sensorType + '</td><td>' + sensorName + '</td><td>' + message1 + '</td></tr>';                                            
                     }
-                    else if (sensorName.contains('00:11:CE:E')) {
-                        sensorType = 'Automobile TDU Sensor';
-                        if (flag == true) {
-                            if (result.isSuccess()) {
-                                message1 = sensorType + ' Inserted Under Installation Account : ' + (String)recordName.get('Account__c');
-                            }
-                            else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                }
-                            }
-                        }
-                        else {
-                            if (result.isSuccess()) {
-                                if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                    message1 = sensorType + ' is moved from Shipment Account ' + opp.Shipment_Account__c + ' to Installation Account ' + opp.AccountId;                                    
-                                }
-                                else {
-                                    message1 = sensorType + ' is moved from Installation Account ' + opp.AccountId + ' to Shipment Account ' + opp.Shipment_Account__c;                                   
-                                }
-                            }
-                            else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                }
-                            }
-                        }
-                    }
-                    else if (sensorName.substring(1,3).isNumeric()) {
-                        sensorType = 'Automobile Tag';
-                        if (flag == true) {
-                            if (result.isSuccess()) {
-                                message1 = sensorType + ' Inserted Under Installation Account : ' + (String)recordName.get('Account__c');
-                            }
-                            else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                }
-                            }
-                        }
-                        else {
-                            if (result.isSuccess()) {
-                                if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                    message1 = sensorType + ' is moved from Shipment Account ' + opp.Shipment_Account__c + ' to Installation Account ' + opp.AccountId;                                    
-                                }
-                                else {
-                                    message1 = sensorType + ' is moved from Installation Account ' + opp.AccountId + ' to Shipment Account ' + opp.Shipment_Account__c;                                   
-                                }
-                            }
-                            else {
-                                for (Database.Error error : result.getErrors()) {
-                                    message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                }
-                            }
-                        }
+                    if (String.isNotEmpty(message2)) {
+                        htmlBody2 += '<tr><td>' + sensorType + '</td><td>' + sensorName + '</td><td>' + message2 + '</td></tr>';                       
+                        message2Reference = message2;                     
                     }
                 }
-
-                // Add message to HTML Body
-                htmlBody1 += '<tr><td>' + sensorType + '</td><td>' + sensorName + '</td><td>' + message1 + '</td></tr>';                        
-                htmlBody2 += '<tr><td>' + sensorType + '</td><td>' + sensorName + '</td><td>' + message2 + '</td></tr>';   
-                message2Reference = message2;                     
             }
+
 
             // Close HTML Body
             htmlBody1 += '</table><br>';
             htmlBody2 += '</table><br>';
-            if (message2Reference != null) {
+            if (String.isEmpty(message2Reference)) {
                 emailMsg.setHtmlBody(htmlBody1 + htmlBody2);                
             }
             else {
