@@ -12,6 +12,8 @@ public with sharing class OpportunityTriggerHelper {
     Static Final String insertionEmailMessage = ' Inserted Under Installation Account : ';
     Static Final String updateShipmentToInstallationEmailMessage = ' is moved from Shipment to under Installation Account.';
     Static Final String updateInstallationToShipmentEmailMessage = ' is moved from Installation to under Shipment Account.';
+    Static Final String notCreatedEmailMessae = ' Record not created.';
+    Static Final String notUpdatedEmailMessage = ' Record not updated.';
 
     /*
     ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -217,26 +219,25 @@ public with sharing class OpportunityTriggerHelper {
         }
 
         Set<SObject> setOfAutomobileRecords = new Set<SObject>();
+        Boolean insertFlag = false;
+        Boolean updateFlag = false;
 
-        if (!createNewAutomobileRecords.isEmpty()) {
-            if (!updateExistingAutomobileRecors.isEmpty()) {
-                setOfAutomobileRecords.addAll(createNewAutomobileRecords);
-                setOfAutomobileRecords.addAll(updateExistingAutomobileRecors);
-            }
-        }
-
-        Boolean flag = true;
-        if (!createNewAutomobileRecords.isEmpty()) {
-            // Insert New Automobile Records
-            flag = true;
+        if (!createNewAutomobileRecords.isEmpty() && !updateExistingAutomobileRecors.isEmpty()) {
+            insertFlag = true;
+            updateFlag = true;
             setOfAutomobileRecords.addAll(createNewAutomobileRecords);
-            sendMail(setOfAutomobileRecords, listOfOpportuinties, flag);
-        }
-        if (!updateExistingAutomobileRecors.isEmpty()) {
-            // Update Existing Automobile Records
-            flag = false;
             setOfAutomobileRecords.addAll(updateExistingAutomobileRecors);
-            sendMail(setOfAutomobileRecords, listOfOpportuinties, flag);
+            sendMail(setOfAutomobileRecords, listOfOpportuinties, insertFlag, updateFlag);
+        }
+        else if (!createNewAutomobileRecords.isEmpty()) {
+            insertFlag = true;
+            setOfAutomobileRecords.addAll(createNewAutomobileRecords);
+            sendMail(setOfAutomobileRecords, listOfOpportuinties, insertFlag, updateFlag);
+        }
+        else if (!updateExistingAutomobileRecors.isEmpty()) {
+            updateFlag = true;
+            setOfAutomobileRecords.addAll(updateExistingAutomobileRecors);
+            sendMail(setOfAutomobileRecords, listOfOpportuinties, insertFlag, updateFlag);
         }
     }
 
@@ -250,7 +251,7 @@ public with sharing class OpportunityTriggerHelper {
     ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
     */
 
-    public static void sendMail(Set<SObject> setOfAutomobileRecords, Set<Opportunity> setOfOpportuinties, Boolean flag) {
+    public static void sendMail(Set<SObject> setOfAutomobileRecords, Set<Opportunity> setOfOpportuinties, Boolean insertFlag, Boolean updateFlag) {
 
         Map<String, SObject> mapOfRecordsWithOpportunity = new Map<String, Opportunity>();
         Map<String, List<SObject>> mapOfAutomobileRecords = new Map<String, List<SObject>>();
@@ -298,114 +299,82 @@ public with sharing class OpportunityTriggerHelper {
                     for (Database.UpsertResult result : results) {
                         if (sensorName.contains('00:11:CE:00')) {
                             sensorType = 'Automobile Sensor';
-                            if (flag == true) {
-                                if (result.isSuccess()) {
-                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            if (result.isCreated()) {
+                                message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            }
+                            else {
+                                message2 = notCreatedEmailMessae;
+                            }
+                            if (result.isCreated() == false) {
+                                if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                    message1 = sensorType + updateShipmentToInstallationEmailMessage;
                                 }
                                 else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
+                                    message1 = sensorType + updateInstallationToShipmentEmailMessage;
                                 }
                             }
                             else {
-                                if (result.isSuccess()) {
-                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
-                                    }
-                                    else {
-                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
-                                    }
-                                }
-                                else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
-                                }
+                                message2 = notUpdatedEmailMessage;
                             }
                         }
                         else if (sensorName.contains('00:11:CE:D')) {
                             sensorType = 'Automobile Presence Sensor';
-                            if (flag == true) {
-                                if (result.isSuccess()) {
-                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            if (result.isCreated()) {
+                                message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            }
+                            else {
+                                message2 = notCreatedEmailMessae;
+                            }
+                            if (result.isCreated() == false) {
+                                if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                    message1 = sensorType + updateShipmentToInstallationEmailMessage;
                                 }
                                 else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
+                                    message1 = sensorType + updateInstallationToShipmentEmailMessage;
                                 }
                             }
                             else {
-                                if (result.isSuccess()) {
-                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
-                                    }
-                                    else {
-                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
-                                    }
-                                }
-                                else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
-                                }
+                                message2 = notUpdatedEmailMessage;
                             }
                         }
                         else if (sensorName.contains('00:11:CE:E')) {
                             sensorType = 'Automobile TDU Sensor';
-                            if (flag == true) {
-                                if (result.isSuccess()) {
-                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            if (result.isCreated()) {
+                                message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            }
+                            else {
+                                message2 = notCreatedEmailMessae;
+                            }
+                            if (result.isCreated() == false) {
+                                if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                    message1 = sensorType + updateShipmentToInstallationEmailMessage;
                                 }
                                 else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
+                                    message1 = sensorType + updateInstallationToShipmentEmailMessage;
                                 }
                             }
                             else {
-                                if (result.isSuccess()) {
-                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
-                                    }
-                                    else {
-                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
-                                    }
-                                }
-                                else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
-                                }
+                                message2 = notUpdatedEmailMessage;
                             }
                         }
                         else if (sensorName.substring(1,3).isNumeric()) {
                             sensorType = 'Automobile Tag';
-                            if (flag == true) {
-                                if (result.isSuccess()) {
-                                    message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            if (result.isCreated()) {
+                                message1 = sensorType + insertionEmailMessage + (String)recordName.get('Account__c');
+                            }
+                            else {
+                                message2 = notCreatedEmailMessae;
+                            }
+                            if (result.isCreated() == false) {
+                                if (opp.AccountId == (String)recordName.get('Account__c')) {
+                                    message1 = sensorType + updateShipmentToInstallationEmailMessage;
                                 }
                                 else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
+                                    message1 = sensorType + updateInstallationToShipmentEmailMessage;
                                 }
                             }
                             else {
-                                if (result.isSuccess()) {
-                                    if (opp.AccountId == (String)recordName.get('Account__c')) {
-                                        message1 = sensorType + updateShipmentToInstallationEmailMessage;
-                                    }
-                                    else {
-                                        message1 = sensorType + updateInstallationToShipmentEmailMessage;
-                                    }
-                                }
-                                else {
-                                    for (Database.Error error : result.getErrors()) {
-                                        message2 = error.getStatusCode() + ': ' + error.getMessage();
-                                    }
-                                }
+                                message2 = notUpdatedEmailMessage;
                             }
                         }
                     }

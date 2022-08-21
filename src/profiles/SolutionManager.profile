@@ -75,6 +75,9 @@
         <field>Opportunity.Shipment_Account__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <layoutAssignments>
+        <layout>Opportunity-Opportunity Layout</layout>
+    </layoutAssignments>
     <tabVisibilities>
         <tab>Automobile_Presence_Sensor__c</tab>
         <visibility>DefaultOn</visibility>
