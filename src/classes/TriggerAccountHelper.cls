@@ -1,9 +1,8 @@
 /*──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-* @Description      This is TriggerAccountHelper class.
-*                   It has two methods. First is used to send mail of Account Information.
-* @author           Bharat Kumar   <bharat.kumar@fexle.com>
-* @version          1.0
-* @created          2022-07-20
+* Created Date          :       20/7/2022
+* Author                :       Bharat Kumar
+* Description           :       This is TriggerAccountHelper class.
+*                               It has two methods. First is used to send mail of Account Information.
 * ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 */
 
@@ -155,6 +154,37 @@ public with sharing class TriggerAccountHelper {
             if (Trigger.isDelete) {
                 System.debug('Check Delete List of Trigger.New -> ' + newList);
                 System.debug('Check Delete List of Trigger.old -> ' + oldList);
+            }
+        }
+    }
+
+    /*
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+    * Description          :       This method Sync Property and Account Status.
+    * Author               :       Bharat Kumar
+    * Created Date         :       2022-08-16
+    * Returns              :       Void
+    * Parameters           :       List<Account__c>
+    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+    */
+
+    public static void setAccountStatus(List<Account> accList) {
+        Set<Id> setOfPropertyId = new Set<Id>();
+        for (Account acc : accList) {
+            setOfPropertyId.add(acc.Property__c);
+        }
+
+        List<Property__c> listOfProperties = [Select Id, Name, Status__c From Property__c Where Id In : setOfPropertyId];
+        Map<Id, Property__c> mapOfProperties = new Map<Id, Property__c>();
+        mapOfProperties.putAll(listOfProperties);
+
+        for (Account acc : accList) {
+            System.debug(String.isBlank(acc.Status__c));
+            if (String.isBlank(acc.Status__c)) {
+                Property__c prop = mapOfProperties.get(acc.Property__c);
+                if (!String.isBlank(prop.Status__c)) {
+                    acc.Status__c = prop.Status__c;
+                }
             }
         }
     }

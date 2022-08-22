@@ -1,5 +1,8 @@
 trigger ContactTrigger on Contact (before insert) {
-    if (trigger.isBefore && trigger.isInsert) {
-        ContactTriggerHelper.ValidateContact(trigger.new);
+    if (Trigger.isBefore) {
+        if (Trigger.isInsert) {
+            // ContactTriggerHelper.ValidateContact(Trigger.new);
+            ContactTriggerHelper.setContactStatus(Trigger.new);            
+        }
     }
 }
