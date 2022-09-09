@@ -1,0 +1,35 @@
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card title="Search Contact, Opportunities and Cases Related to Account" class="searchBox">
+        <div>
+            <lightning-combobox label="Accounts Available" value={value} placeholder="Select an Account" options={options} onchange={handleChangedValue}></lightning-combobox>
+        </div>
+    </lightning-card>
+
+    <template if:true={cardVisible}>
+        <lightning-card title="Contacts">
+            <div style="height: auto; width: auto">
+                <lightning-datatable key-field="Id" data={con} columns={conColumns}></lightning-datatable>
+            </div>
+        </lightning-card>
+    </template>
+    
+    <template if:true={cardVisible}>
+        <lightning-card title="Opportunities">
+            <div style="height: auto; width: auto">
+                <lightning-datatable key-field="Id" data={opp} columns={oppColumns}></lightning-datatable>
+            </div>
+        </lightning-card>
+    </template>
+    
+    <template if:true={cardVisible}>
+        <lightning-card title="Cases">
+            <div style="height: auto; width: auto">
+                <lightning-datatable key-field="Id" data={cas} columns={casColumns}></lightning-datatable>
+            </div>
+        </lightning-card>
+    </template>
+</template>
