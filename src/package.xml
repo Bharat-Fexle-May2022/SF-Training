@@ -10,9 +10,5 @@
         <members>renderMultipleHTMLTemplates</members>
         <name>LightningComponentBundle</name>
     </types>
-    <types>
-        <members>*</members>
-        <name>Profile</name>
-    </types>
     <version>53.0</version>
 </Package>
