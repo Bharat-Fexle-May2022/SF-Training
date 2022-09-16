@@ -16,7 +16,7 @@ public with sharing class ContactController {
 
     @AuraEnabled
     public static List<Contact> getContactTile() {
-        List<Contact> conList = [Select Id, Name, Title, Phone, Email From Contact Order By CreatedDate Asc Limit 17]; 
+        List<Contact> conList = [Select Id, Name, Title, Phone, Email From Contact Order By CreatedDate Asc Limit 20]; 
         return conList;
     }
 }
