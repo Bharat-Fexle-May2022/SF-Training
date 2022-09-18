@@ -13,4 +13,10 @@ public with sharing class ContactController {
     public static string getTextMethod3(){
         return 'Method-3';
     }
+
+    @AuraEnabled
+    public static List<Contact> getContactTile() {
+        List<Contact> conList = [Select Id, Name, Title, Phone, Email From Contact Order By CreatedDate Asc Limit 20]; 
+        return conList;
+    }
 }
